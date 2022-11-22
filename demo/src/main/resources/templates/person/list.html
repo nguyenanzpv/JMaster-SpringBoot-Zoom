@@ -1,0 +1,14 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Age</th>
+    </tr>
+    <!--for list person-->
+    <tr th:each="p : ${list}">
+        <td>Id<span th:text="${p.id}"></span></td>
+        <td th:text="${p.name}"></td>
+        <td th:text="${p.age}"></td>
+    </tr>
+</table>
