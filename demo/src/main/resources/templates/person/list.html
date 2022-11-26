@@ -10,5 +10,6 @@
         <td>Id<span th:text="${p.id}"></span></td>
         <td th:text="${p.name}"></td>
         <td th:text="${p.age}"></td>
+        <td><a th:href="@{'/person/delete?id='+${p.id}}">Delete</a></td>
     </tr>
 </table>

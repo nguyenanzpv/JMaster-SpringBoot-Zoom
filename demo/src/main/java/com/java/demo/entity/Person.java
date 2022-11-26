@@ -1,9 +1,19 @@
 package com.java.demo.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 @Data
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name ="person")
 public class Person {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //tu dong generate id tuy thuoc vao database
     private int id;
     private String name;
     private int age;
