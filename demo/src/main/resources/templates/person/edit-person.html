@@ -1,0 +1,14 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form th:action="@{/person/edit}" method="post">
+    <input name="id" th:value="${person.id}" readonly placeholder="Enter id....">
+    <input name="name" th:value="${person.name}" placeholder="Enter name....">
+    <input name="age" th:value="${person.age}" placeholder="Enter age....">
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>

@@ -6,12 +6,12 @@ import com.java.demo.repo.PersonRepo;
 import com.java.demo.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,9 +57,35 @@ public class PersonController {
         return "person/list.html";
     }
 
+    @GetMapping("/search")
+    public String search(@RequestParam("min") int min,
+                         @RequestParam("max") int max,
+                         @RequestParam("page") int page,
+                         @RequestParam("size") int size,
+                         Model model){
+        Page<Person> pagePerson = personRepo.search(min,max, PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"age")));
+        System.out.println(pagePerson.getTotalPages());
+        System.out.println(pagePerson.getTotalElements());
+        model.addAttribute("list", pagePerson.getContent());
+        return "person/list.html";
+    }
+
     @GetMapping("/delete")
     public String delete(@RequestParam("id") int id){
         personRepo.deleteById(id);
         return "redirect:/person/list"; //list la duong dan url
+    }
+
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable("id") int id, Model model){
+        Person p = personRepo.findById(id).orElse(null);
+        model.addAttribute("person",p);
+        return "person/edit-person.html";
+    }
+
+    @PostMapping("/edit")
+    public String edit(@ModelAttribute Person p){
+        personRepo.save(p);
+        return "redirect:/person/list";
     }
 }
