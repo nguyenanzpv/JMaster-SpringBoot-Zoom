@@ -2,6 +2,7 @@ package com.springboot.project2.entity;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +12,7 @@ import java.util.Date;
 
 @Entity
 @Data
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +33,9 @@ public class User {
 
     //do dung chung 1 class giua entity va model
     //anotation nay se ko luu fiedl nay vao db
-    @Transient // field is not persistent.
-    private MultipartFile file;
+    //tach User va UserDTO nen ko can field nay trong User
+    //@Transient // field is not persistent.
+    //private MultipartFile file;
 
     @CreatedDate // tu gen
 //	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
