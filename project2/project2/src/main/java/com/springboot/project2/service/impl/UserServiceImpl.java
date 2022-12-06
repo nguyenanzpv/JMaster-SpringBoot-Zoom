@@ -2,8 +2,11 @@ package com.springboot.project2.service.impl;
 
 import com.springboot.project2.dto.PageDTO;
 import com.springboot.project2.dto.UserDTO;
+import com.springboot.project2.dto.UserRoleDTO;
 import com.springboot.project2.entity.User;
+import com.springboot.project2.entity.UserRole;
 import com.springboot.project2.repo.UserRepo;
+import com.springboot.project2.repo.UserRoleRepo;
 import com.springboot.project2.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepo userRepo;
 
+    @Autowired
+    UserRoleRepo userRoleRepo;
+
     @Override
     @Transactional
     public void create(UserDTO user) {
@@ -35,6 +41,19 @@ public class UserServiceImpl implements UserService {
         u.setAvatar(user.getAvatar());*/
 
         userRepo.save(u);
+        //save userrole
+        List<UserRoleDTO> userRoleDTOS = user.getUserRoles();
+        {
+            for (UserRoleDTO userRoleDTO : userRoleDTOS){
+                if(userRoleDTO.getRole()!=null){
+                    //save to db
+                    UserRole userRole = new UserRole();
+                    userRole.setUser(u);
+                    userRole.setRole(userRoleDTO.getRole());
+                    userRoleRepo.save(userRole);
+                }
+            }
+        }
     }
 
     @Override

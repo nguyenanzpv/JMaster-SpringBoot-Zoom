@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class UserDTO {
@@ -26,4 +27,6 @@ public class UserDTO {
 
 //	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date createdAt;
+
+    private List<UserRoleDTO> userRoles;
 }

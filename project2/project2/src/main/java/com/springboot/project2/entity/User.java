@@ -2,6 +2,7 @@ package com.springboot.project2.entity;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -28,7 +30,7 @@ public class User {
     private String username;
     private String password;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    //@DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date birthdate;
 
     //do dung chung 1 class giua entity va model
@@ -41,12 +43,24 @@ public class User {
 //	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date createdAt;
 
-//	@ElementCollection
-//	@CollectionTable(name = "user_role",
-//		joinColumns = @JoinColumn(name = "user_id"))
-//	@Column(name = "role")
-//	private List<String> roles;
+    @LastModifiedBy
+    private Date lastUpdatedAt;
 
-//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-//    private List<UserRole> userRoles;
+    //Cach 2 -> hay dung
+    //Dung duoc khi bang user_role chi co column user va role -> them 1 column nua se ko dung cach nay duoc
+	//@ElementCollection
+	//@CollectionTable(name = "user_role",
+	//	joinColumns = @JoinColumn(name = "user_id"))
+	//@Column(name = "role")
+	//private List<String> roles;
+
+    //Cach 1
+    //ko bat buoc
+    //Lazy -> khi lay user se chi lay user ko lay userrole -> khi chay moi lay
+    //eager -> lay user se lay luon user role
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<UserRole> userRoles;
+
+    @ManyToMany(mappedBy="users", fetch=FetchType.LAZY)
+    List<Group> groups;
 }
