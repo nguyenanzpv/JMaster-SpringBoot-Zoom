@@ -76,6 +76,18 @@ public class UserController {
         Files.copy(file.toPath(),response.getOutputStream());
     }
 
+    @GetMapping("/delete") // ?id=1
+    public String delete(@RequestParam("id") int id){
+        userService.delete(id);
+        return "redirect:/user/search";
+    }
+
+    @GetMapping("/edit") // ?id=1
+    public String edit(@RequestParam("id")int id, Model model){
+        model.addAttribute("user", userService.getById(id)) ;
+        return "user/detail.html";
+    }
+
     @GetMapping("/search")
     public String search(
             @RequestParam(name="id", required = false) Integer id,

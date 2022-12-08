@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
 import javax.persistence.NoResultException;
+import javax.persistence.Transient;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public void update(UserDTO userDTO) {
+        User user = userRepo.findById(userDTO.getId()).orElseThrow(NoResultException::new);
+        user.setName(userDTO.getName());
+        user.setUsername(userDTO.getUsername());
+        user.setBirthdate(userDTO.getBirthdate());
+        user.setAvatar(userDTO.getAvatar());
+
+        userRepo.save(user);
+    }
+
+    @Override
+    public void updatePassword(UserDTO userDTO) {
+        User user = userRepo.findById(userDTO.getId()).orElseThrow(NoResultException::new);
+        user.setPassword(userDTO.getPassword());
+
+        userRepo.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void delete(int id) {
+        userRepo.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll(List<Integer> ids) {
+        userRepo.deleteAllById(ids);
+    }
+
+    @Override
+    @Transactional
     public UserDTO getById(int id) {
         User user = userRepo.findById(id).orElseThrow(NoResultException::new); //java8 lambda
         /*UserDTO userDto = new UserDTO();
@@ -72,6 +105,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public PageDTO<UserDTO> searchByName(String name, int page, int size) {
         Pageable pageable = PageRequest.of(page,size);
         Page<User> pageRS = userRepo.searchByName("%"+name+"%", pageable);
