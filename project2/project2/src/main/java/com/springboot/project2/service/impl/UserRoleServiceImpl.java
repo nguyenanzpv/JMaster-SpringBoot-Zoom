@@ -111,4 +111,23 @@ public class UserRoleServiceImpl implements UserRoleService {
         pageDTO.setContents(userRoleDTOs); //set vao page dto
         return pageDTO;
     }
+
+    @Override
+    public PageDTO<UserRoleDTO> searchByUserIdRole(int userId, String role, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+
+        Page<UserRole> pageRS = userRoleRepo.searchByUserIdRole(userId,role,pageable);
+
+        PageDTO<UserRoleDTO> pageDTO = new PageDTO<UserRoleDTO>();
+        pageDTO.setTotalPages(pageRS.getTotalPages());
+        pageDTO.setTotalElements(pageRS.getTotalElements());
+
+        List<UserRoleDTO> userRoleDTOs = new ArrayList<>();
+        for(UserRole userRole : pageRS.getContent()){
+            userRoleDTOs.add(new ModelMapper().map(userRole,UserRoleDTO.class));
+        }
+
+        pageDTO.setContents(userRoleDTOs); //set vao page dto
+        return pageDTO;
+    }
 }

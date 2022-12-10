@@ -27,27 +27,36 @@
 <table border="1">
     <thead>
     <tr>
+        <th>Check</th>
         <th>ID</th>
         <th>Name</th>
         <th>Avatar</th>
         <th>CreatedAt</th>
+        <th>Role</th>
         <th>Actions</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="d : ${userList}">
-        <td th:text="${d.id}"></td>
-        <td th:text="${d.name}"></td>
+    <form th:action="@{/user/delete-all}" th:object="${userList}">
+        <tr th:each="d : ${userList}">
+            <td><input type="checkbox" name="cid[]" th:value="${d.id}"/></td>
+            <td th:text="${d.id}"></td>
+            <td th:text="${d.name}"></td>
 
-        <td><img height="100" th:src="@{'/user/download?filename=' + ${d.avatar}}"></td>
+            <td><img height="100" th:src="@{'/user/download?filename=' + ${d.avatar}}"></td>
 
-        <td th:text="${#dates.format(d.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
-        <td>
-            <a th:href="@{'/user/get/' + ${d.id}}">View</a>
-            <a th:href="@{'/user/edit?id=' + ${d.id}}">Edit</a>
-            <a th:href="@{'/user/delete?id=' + ${d.id}}">Delete</a>
-        </td>
-    </tr>
+            <td th:text="${#dates.format(d.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+            <td th:each="r:${d.userRoles}" th:text="${r.role}">
+            </td>
+            <td>
+                <a th:href="@{'/user/get/' + ${d.id}}">View</a>
+                <a th:href="@{'/user/edit?id=' + ${d.id}}">Edit</a>
+                <a th:href="@{'/user/edit-password?id=' + ${d.id}}">Edit Password</a>
+                <a th:href="@{'/user/delete?id=' + ${d.id}}">Delete</a>
+            </td>
+        </tr>
+        <input type="submit" value="Delete All"/>
+    </form>
     </tbody>
     <tfoot>
     <tr>

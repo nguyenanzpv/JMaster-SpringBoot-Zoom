@@ -17,7 +17,11 @@ public interface UserRoleRepo extends JpaRepository<UserRole,Integer> {
     @Query("select ur from UserRole ur JOIN ur.user u WHERE u.id = :uid")
     Page<UserRole> searchByUserId(@Param("uid") int userId, Pageable pageable);
 
+    //@Modifying //danh dau cau lenh query la update/delete -> khi co join bang
+    @Query("select ur from UserRole ur JOIN ur.user u WHERE u.id = :uid and ur.role = :role")
+    Page<UserRole> searchByUserIdRole(@Param("uid") int userId,@Param("role") String role, Pageable pageable);
+
     //@Modifying //danh dau cau lenh query la update/delete
-    @Query("select ur from UserRole ur WHERE ur.role = :role")
+    @Query("select ur from UserRole ur WHERE ur.role like :role")
     Page<UserRole> searchByRole(@Param("role") String role, Pageable pageable);
 }

@@ -21,6 +21,7 @@ import javax.persistence.Transient;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,10 +31,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRoleRepo userRoleRepo;
 
+    @Autowired
+    ModelMapper modelMapper;
+
     @Override
     @Transactional
-    public void create(UserDTO user) {
-        User u = new ModelMapper().map(user,User.class);
+    public void create(UserDTO userDTO) {
+        User u = new ModelMapper().map(userDTO,User.class);
         //convert dto - entity
         /*u.setName(user.getName());
         u.setUsername(user.getUsername());
@@ -42,8 +46,9 @@ public class UserServiceImpl implements UserService {
         u.setAvatar(user.getAvatar());*/
 
         userRepo.save(u);
+
         //save userrole
-        List<UserRoleDTO> userRoleDTOS = user.getUserRoles();
+        List<UserRoleDTO> userRoleDTOS = userDTO.getUserRoles();
         {
             for (UserRoleDTO userRoleDTO : userRoleDTOS){
                 if(userRoleDTO.getRole()!=null){
@@ -55,37 +60,6 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
-    }
-
-    @Override
-    @Transactional
-    public void update(UserDTO userDTO) {
-        User user = userRepo.findById(userDTO.getId()).orElseThrow(NoResultException::new);
-        user.setName(userDTO.getName());
-        user.setUsername(userDTO.getUsername());
-        user.setBirthdate(userDTO.getBirthdate());
-        user.setAvatar(userDTO.getAvatar());
-
-        userRepo.save(user);
-    }
-
-    @Override
-    public void updatePassword(UserDTO userDTO) {
-        User user = userRepo.findById(userDTO.getId()).orElseThrow(NoResultException::new);
-        user.setPassword(userDTO.getPassword());
-
-        userRepo.save(user);
-    }
-
-    @Override
-    @Transactional
-    public void delete(int id) {
-        userRepo.deleteById(id);
-    }
-
-    @Override
-    public void deleteAll(List<Integer> ids) {
-        userRepo.deleteAllById(ids);
     }
 
     @Override
@@ -102,6 +76,51 @@ public class UserServiceImpl implements UserService {
         userDto.setCreatedAt(user.getCreatedAt());*/
         UserDTO userDto = new ModelMapper().map(user,UserDTO.class);
         return userDto;
+    }
+
+    @Override
+    @Transactional
+    public void delete(int id) {
+        User user = userRepo.findById(id).orElseThrow(NoResultException::new); //java8 lambda
+
+        if(user!=null){
+            userRoleRepo.deleteByUserId(user.getId());
+            userRepo.deleteById(user.getId());
+        }
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteAll(List<Integer> ids) {
+        for(Integer id : ids){
+            userRoleRepo.deleteByUserId(id);
+        }
+        userRepo.deleteAllById(ids);
+    }
+
+    @Override
+    @Transactional
+    public void update(UserDTO userDTO) {
+        Optional<User> u = userRepo.findById(userDTO.getId());
+        if(u!=null){
+         /*   modelMapper.typeMap(UserDTO.class,User.class)
+                    .addMappings(mapper -> mapper.skip(User::setPassword)).map(userDTO,u.get());*/
+            u.get().setName(userDTO.getName());
+            u.get().setAvatar(userDTO.getAvatar());
+            u.get().setBirthdate(userDTO.getBirthdate());
+            u.get().setUsername(userDTO.getUsername());
+            userRepo.save(u.get());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updatePassword(UserDTO userDTO) {
+        User user = userRepo.findById(userDTO.getId()).orElseThrow(NoResultException::new);
+        user.setPassword(userDTO.getPassword());
+
+        userRepo.save(user);
     }
 
     @Override

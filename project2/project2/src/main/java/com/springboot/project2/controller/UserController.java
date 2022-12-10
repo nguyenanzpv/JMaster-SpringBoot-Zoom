@@ -27,6 +27,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/user")
 public class UserController {
+    // https://javatute.com/jpa/spring-data-jpa-crudrepository-delete-and-deleteall/
     @Autowired
     UserService userService;
 
@@ -38,7 +39,7 @@ public class UserController {
     @PostMapping("/new")
     public String add(@ModelAttribute UserDTO u) throws IllegalStateException, IOException {
         if(u.getFile() != null && !u.getFile().isEmpty()){
-            final String UPLOAD_FOLDER = "E:/JMaster/JavaSpringBoot/project2/project2/src/main/resources/static/upload/";
+            final String UPLOAD_FOLDER = "C:/nntan/Project/ASPNETCORE/Jmaster/Java-SpringBoot-BaiTapSection/project2/src/main/resources/static/upload/";
             String filename = u.getFile().getOriginalFilename();
             File newFile = new File(UPLOAD_FOLDER + filename);
             u.getFile().transferTo(newFile);
@@ -53,7 +54,7 @@ public class UserController {
         System.out.println(files.length);
         for (MultipartFile file : files)
             if (!file.isEmpty()) {
-                final String UPLOAD_FOLDER = "E:/JMaster/JavaSpringBoot/project2/project2/src/main/resources/static/upload/";
+                final String UPLOAD_FOLDER = "C:/nntan/Project/ASPNETCORE/Jmaster/Java-SpringBoot-BaiTapSection/project2/src/main/resources/static/upload/";
 
                 String filename = file.getOriginalFilename();
                 File newFile = new File(UPLOAD_FOLDER + filename);
@@ -69,23 +70,11 @@ public class UserController {
     @GetMapping("/download")
     public void download(@RequestParam("filename") String filename, HttpServletResponse response) throws IOException
     {
-        final String UPLOAD_FOLDER="E:/JMaster/JavaSpringBoot/project2/project2/src/main/resources/static/upload/";
+        final String UPLOAD_FOLDER="C:/nntan/Project/ASPNETCORE/Jmaster/Java-SpringBoot-BaiTapSection/project2/src/main/resources/static/upload/";
         File file = new File(UPLOAD_FOLDER+filename);
         //co the chi dinh dinh dang file la gi qua content type
         //java.nio.file.Files
         Files.copy(file.toPath(),response.getOutputStream());
-    }
-
-    @GetMapping("/delete") // ?id=1
-    public String delete(@RequestParam("id") int id){
-        userService.delete(id);
-        return "redirect:/user/search";
-    }
-
-    @GetMapping("/edit") // ?id=1
-    public String edit(@RequestParam("id")int id, Model model){
-        model.addAttribute("user", userService.getById(id)) ;
-        return "user/detail.html";
     }
 
     @GetMapping("/search")
@@ -118,6 +107,59 @@ public class UserController {
         model.addAttribute("size", size);
 
         return "user/search.html";
+    }
+
+    @GetMapping("/edit") // ?id=1
+    public String edit(@RequestParam("id") int id, Model model) {
+        model.addAttribute("user", userService.getById(id));
+        return "user/edit.html";
+    }
+
+    @PostMapping("/edit")
+    public String edit(@ModelAttribute UserDTO userDTO) throws IllegalStateException, IOException {
+        if(userDTO.getFile() != null && !userDTO.getFile().isEmpty()){
+            final String UPLOAD_FOLDER = "C:/nntan/Project/ASPNETCORE/Jmaster/Java-SpringBoot-BaiTapSection/project2/src/main/resources/static/upload/";
+            String filename = userDTO.getFile().getOriginalFilename();
+            File newFile = new File(UPLOAD_FOLDER + filename);
+            userDTO.getFile().transferTo(newFile);
+            userDTO.setAvatar(filename);//save to db
+        }
+        userService.update(userDTO);
+        return "redirect:/user/search";
+    }
+
+    @GetMapping("/edit-password")
+    public String editPassword(@RequestParam("id") int id, Model model) {
+        model.addAttribute("user", userService.getById(id));
+        return "user/edit-password.html";
+    }
+
+    @PostMapping("/edit-password")
+    public String editPassword(@ModelAttribute UserDTO userDTO) throws IllegalStateException, IOException {
+        if(userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()){
+            userService.updatePassword(userDTO);
+        }
+        return "redirect:/user/search";
+    }
+
+    //@DeleteMapping("/delete") //?id=
+    @GetMapping("/delete")
+    public String delete(@RequestParam("id") int id) {
+        userService.delete(id);
+        return "redirect:/user/search";
+    }
+
+    //@DeleteMapping("/delete-all") //?ids=1,2,3
+    @GetMapping("/delete-all")
+    public String deleteAll(@RequestParam(value = "cid[]") List<Integer> ids) {
+        userService.deleteAll(ids);
+        return "redirect:/user/search";
+    }
+
+    @GetMapping("/get/{id}")//get/10
+    public String get(@PathVariable("id") int id, Model model) {
+        model.addAttribute("user", userService.getById(id));
+        return "user/view.html";
     }
 
 }
