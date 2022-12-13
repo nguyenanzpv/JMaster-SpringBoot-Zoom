@@ -31,8 +31,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRoleRepo userRoleRepo;
 
-    @Autowired
-    ModelMapper modelMapper;
 
     @Override
     @Transactional

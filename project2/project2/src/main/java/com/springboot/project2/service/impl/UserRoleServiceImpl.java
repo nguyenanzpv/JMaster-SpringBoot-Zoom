@@ -27,6 +27,9 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Autowired
     UserRepo userRepo;
 
+    @Autowired
+    ModelMapper modelMapper;
+
     @Override
     @Transactional
     public void create(UserRoleDTO userRoleDTO) {
