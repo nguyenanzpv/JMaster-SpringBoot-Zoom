@@ -49,8 +49,9 @@ public class UserRoleRESTController {
     {
         size = size == null ? 10 : size;
         page = page == null ? 0 : page;
-        role = role == null ?"" : role;
+        role = role == null ?"%%" : role;
         userId = userId == null ? null : userId;
+
         PageDTO<UserRoleDTO> pageRS = null;
         if(userId == null){
             pageRS = userRoleService.searchByRole("%"+role+"%",page,size);
