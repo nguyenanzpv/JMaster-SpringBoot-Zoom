@@ -12,5 +12,5 @@ public interface StudentService {
     public void delete(int id);
     public void deleteAll(List<Integer> ids);
     public StudentDTO getById(int id);
-    public PageDTO<StudentDTO> searchByName(String name, int page, int size);
+    public PageDTO<StudentDTO> search(String name, String studentCode, int page, int size);
 }
